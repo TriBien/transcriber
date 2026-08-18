@@ -1,7 +1,7 @@
 
 ## Prepare environment
 ```
-python -m venv .venv
+python3 -m venv .venv
 
 source .venv/bin/activate
 
@@ -14,5 +14,8 @@ pip install -r requirements.txt
 ```
 # the transcript is created at the same folder *.txt
 python transcribe.py [AUDIO_FILE]
+
+# start UI app
+streamlit run app.py
 
 ```
