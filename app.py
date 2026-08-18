@@ -4,22 +4,11 @@ from pathlib import Path
 import streamlit as st
 from faster_whisper import WhisperModel
 
-MODELS = ["tiny.en", "base.en", "tiny", "base"]
-LANGUAGES = {
-    "English": "en",
-    "Vietnamese": "vi"
-}
+MODEL_DIR = Path("models/models--Systran--faster-whisper-tiny.en/snapshots")
+LANGUAGE = "en"
 
 st.set_page_config(page_title="Whisper Transcriber", page_icon="🎙️")
 st.title("🎙️ Whisper Transcriber")
-
-with st.sidebar:
-    st.header("Settings")
-    model_name = st.selectbox("Whisper Model", MODELS, index=0)
-    language_name = st.selectbox("Language", list(LANGUAGES.keys()), index=0)
-    language_code = LANGUAGES[language_name]
-
-st.divider()
 
 audio_file = st.file_uploader(
     "Upload audio file",
@@ -35,13 +24,14 @@ if audio_file and st.button("Transcribe", type="primary"):
 
     try:
         with st.status("Transcribing...", expanded=True) as status:
-            st.write(f"Loading model: **{model_name}**")
-            model = WhisperModel(model_name, device="cpu", compute_type="int8")
+            snapshot = next(MODEL_DIR.iterdir())
+            st.write("Loading model: **tiny.en**")
+            model = WhisperModel(str(snapshot), device="cpu", compute_type="int8")
 
-            st.write(f"Transcribing **{audio_file.name}** ({language_name})")
+            st.write(f"Transcribing **{audio_file.name}**")
             segments, info = model.transcribe(
                 tmp_path,
-                language=language_code,
+                language=LANGUAGE,
                 beam_size=1,
                 vad_filter=True,
             )
